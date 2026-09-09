@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Flux RSS Mobile</string>
+    <string name="image_precedente">PRÉCÉDENT</string>
+    <string name="image_suivante">SUIVANT</string>
+    <string name="description_image">DESCRIPTION_IMAGE</string>
+    <string name="test_image_date">TEST_IMAGE_DATE</string>
+    <string name="test_image_title">TEST_IMAGE_TITLE</string>
+    <string name="test_image_description">TEST_IMAGE_DESCRIPTION</string>
+</resources>
