@@ -1,5 +1,6 @@
 package etu.ecole.fluxrssmobile;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,6 +10,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import etu.ecole.fluxrssmobile.databinding.ActivityMainBinding;
 
@@ -24,9 +29,20 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        RSSFeedViewModel viewModel = new ViewModelProvider(this).get(RSSFeedViewModel.class);
+        RSSFeedViewModel rssFeedViewModel = new ViewModelProvider(this).get(RSSFeedViewModel.class);
         binding.setViewModel(viewModel);
         this.viewModel = viewModel;
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            MyRSSsaxHandler handler = new MyRSSsaxHandler(rssFeedViewModel);
+            handler.setUrl("https://www.lemonde.fr/international/rss_full.xml");
+            handler.processFeed();
+        });
+    }
+
+    public void resetDisplay(String title, String date, Bitmap image, String description) {
+
     }
 
 }
