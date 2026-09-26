@@ -6,4 +6,26 @@
     <string name="test_image_date">TEST_IMAGE_DATE</string>
     <string name="test_image_title">TEST_IMAGE_TITLE</string>
     <string name="test_image_description">TEST_IMAGE_DESCRIPTION</string>
+    <string name="international">International</string>
+    <string name="news">Actualités</string>
+    <string name="economy">Economie</string>
+    <string name="culture">Culture</string>
+    <string name="sport">Sport</string>
+    <string name="planets">Planètes</string>
+    <string name="pixels">Pixels</string>
+    <string name="sciences">Sciences</string>
+    <string name="opinions">Opinions</string>
+    <string name="refresh">Actualiser le flux</string>
+    <string name="no_cache_available">Aucune donnée en cache pour cette catégorie. Connectez-vous à internet pour la charger.</string>
+
+    <string name="rss_url_news">https://www.lemonde.fr/rss/une.xml</string>
+    <string name="rss_url_international">https://www.lemonde.fr/international/rss_full.xml</string>
+    <string name="rss_url_economy">https://www.lemonde.fr/economie/rss_full.xml</string>
+    <string name="rss_url_culture">https://www.lemonde.fr/culture/rss_full.xml</string>
+    <string name="rss_url_sport">https://www.lemonde.fr/sport/rss_full.xml</string>
+    <string name="rss_url_planets">https://www.lemonde.fr/planete/rss_full.xml</string>
+    <string name="rss_url_pixels">https://www.lemonde.fr/pixels/rss_full.xml</string>
+    <string name="rss_url_sciences">https://www.lemonde.fr/sciences/rss_full.xml</string>
+    <string name="rss_url_opinions">https://www.lemonde.fr/idees/rss_full.xml</string>
+
 </resources>

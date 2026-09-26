@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_news"
+        android:title="@string/news"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_international"
+        android:title="@string/international"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_economy"
+        android:title="@string/economy"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_culture"
+        android:title="@string/culture"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sport"
+        android:title="@string/sport"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_planets"
+        android:title="@string/planets"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_pixels"
+        android:title="@string/pixels"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sciences"
+        android:title="@string/sciences"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_opinions"
+        android:title="@string/opinions"
+        app:showAsAction="never" />
+
+</menu>
