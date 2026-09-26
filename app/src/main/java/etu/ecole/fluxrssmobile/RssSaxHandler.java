@@ -6,7 +6,6 @@ import android.util.Log;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -18,8 +17,9 @@ import java.net.URL;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-public class MyRSSsaxHandler extends DefaultHandler {
+public class RssSaxHandler extends DefaultHandler {
     private String url = null ;// l'URL du flux RSS à parser
+
     // Ensemble de drapeau permettant de savoir où en est le parseur dans le flux XML
     private boolean inTitle = false ;
     private boolean inDescription = false ;
@@ -28,17 +28,16 @@ public class MyRSSsaxHandler extends DefaultHandler {
     // L'image référencée par l'attribut url du tag <enclosure>
     private Bitmap image = null ;
     private String imageURL = null ;
+
     // Le titre, la description et la date extraits du flux RSS
     private StringBuffer title = new StringBuffer();
     private StringBuffer description = new StringBuffer();
     private StringBuffer date = new StringBuffer();
-    private int numItem = 0; // Le numéro de l'item à extraire du flux RSS
-    private int numItemMax = - 1; // Le nombre total d’items dans le flux RSS
 
-    private RSSFeedViewModel rssFeedViewModel;
+    private final RssFeedViewModel viewModel;
 
-    public MyRSSsaxHandler(RSSFeedViewModel rssFeedViewModel) {
-        this.rssFeedViewModel = rssFeedViewModel;
+    public RssSaxHandler(RssFeedViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
     public void setUrl(String url){
@@ -47,22 +46,18 @@ public class MyRSSsaxHandler extends DefaultHandler {
 
     public void processFeed(){
         try {
-            numItem = 0; //A modifier pour visualiser un autre item
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             XMLReader reader = parser.getXMLReader();
             reader.setContentHandler(this);
             InputStream inputStream = new URL(url).openStream();
             reader.parse(new InputSource(inputStream));
-            image = getBitmap(imageURL);
-            numItemMax = numItem;
         } catch (Exception e) {
-            Log.e("smb116rssview", "processFeed Exception : " + e.getMessage());
+            Log.e("RSS", "processFeed exception" + e);
         }
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        // qname = le nom de la balise
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals("item")) {
             inItem = true;
             return;
@@ -79,6 +74,10 @@ public class MyRSSsaxHandler extends DefaultHandler {
             case "pubDate":
                 inDate = true;
                 break;
+
+            case "media:content":
+                imageURL = attributes.getValue("url");
+                image = getBitmap(imageURL);
         }
     }
 
@@ -86,7 +85,7 @@ public class MyRSSsaxHandler extends DefaultHandler {
         String chars = new String(ch).substring(start, start+length);
 
         if (!inItem) return;
-        //Log.d("chars", chars);
+
         if (inTitle) {
             title = new StringBuffer();
             title.append(chars);
@@ -106,17 +105,10 @@ public class MyRSSsaxHandler extends DefaultHandler {
     }
 
     public void endElement(String uri, String localName, String qName) {
-        switch (qName) {
-            case "item":
-                inItem = false;
-                ItemModel newItem = new ItemModel(title.toString(), description.toString(), date.toString());
-                rssFeedViewModel.addItem(newItem);
-                numItem++;
-                break;
-
-            case "rss":
-                Log.d("items", rssFeedViewModel.getItems().toString());
-                break;
+        if (qName.equals("item")) {
+            inItem = false;
+            ItemModel newItem = new ItemModel(title.toString(), description.toString(), date.toString(), image);
+            viewModel.addItem(newItem);
         }
     }
 
@@ -125,7 +117,6 @@ public class MyRSSsaxHandler extends DefaultHandler {
         try {
             URL url = new URL(imageURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            //  connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
             return BitmapFactory.decodeStream(input);
