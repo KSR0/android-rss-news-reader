@@ -29,7 +29,7 @@ public class BitmapUtility {
     public static byte[] bitmapToBytes(Bitmap bitmap) {
         if (bitmap == null) return null;
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);  // 80 = qualité de compression
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
         return stream.toByteArray();
     }
 
