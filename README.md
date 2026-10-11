@@ -4,6 +4,10 @@ An Android news reader that loads articles from the RSS feeds of the French dail
 
 Built individually in Java as part of the mobile programming course at ENSICAEN (engineering school, Caen, France).
 
+<p align="center">
+  <img src="docs/screenshot-article.png" width="280" alt="Article view with Previous and Next buttons">
+  <img src="docs/screenshot-menu.png" width="280" alt="Category menu">
+</p>
 
 ## Features
 
