@@ -1,4 +1,4 @@
-# Le Monde RSS Reader for Android
+# Android RSS News Reader
 
 An Android news reader that loads articles from the RSS feeds of the French daily *Le Monde*, displays them one at a time, and keeps working offline thanks to a local cache.
 
