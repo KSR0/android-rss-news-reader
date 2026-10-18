@@ -1,5 +1,7 @@
 # Android RSS News Reader
 
+![Android CI](https://github.com/KSR0/android-rss-news-reader/actions/workflows/android-ci.yml/badge.svg)
+
 An Android news reader that loads articles from the RSS feeds of the French daily *Le Monde*, displays them one at a time, and keeps working offline thanks to a local cache.
 
 Built individually in Java as part of the mobile programming course at ENSICAEN (engineering school, Caen, France).
@@ -57,6 +59,8 @@ Network access and XML parsing never run on the UI thread: Android forbids netwo
 - **Persistence:** Room
 - **XML parsing:** SAX (`javax.xml.parsers`)
 - **Build:** Gradle (Kotlin DSL, version catalog)
+- **Testing:** JUnit 4
+- **CI:** GitHub Actions
 
 ## Getting started
 
@@ -65,6 +69,19 @@ Network access and XML parsing never run on the UI thread: Android forbids netwo
 3. Run the app on an emulator or a device running Android 7.0 or later.
 
 The app requires the `INTERNET` and `ACCESS_NETWORK_STATE` permissions, declared in the manifest.
+
+## Testing
+
+Unit tests run on the JVM (no emulator needed) and are executed on every push by GitHub Actions.
+
+- `RssSaxHandlerTest`: parsing of RSS items, text split across several SAX callbacks (entities, character references), trimming of CDATA content, no field leaking from one item to the next.
+- `RssFeedViewModelTest`: mapping of cached Room entities back to articles.
+
+```bash
+./gradlew testDebugUnitTest
+```
+
+In Android Studio, right-click the `etu.ecole.fluxrssmobile (test)` package and choose **Run Tests**.
 
 ## Project structure
 
@@ -81,7 +98,17 @@ app/src/main/java/etu/ecole/fluxrssmobile/
     ├── AppDatabase.java       # Room database
     ├── RssItemDao.java        # Queries (insert, read and clear by category)
     └── RssItemEntity.java     # Cached article
+
+app/src/test/java/etu/ecole/fluxrssmobile/rss/
+├── RssSaxHandlerTest.java     # Parser unit tests
+└── RssFeedViewModelTest.java  # Cache mapping unit tests
+
+.github/workflows/android-ci.yml  # CI: runs unit tests on every push
 ```
+
+## Known limitations
+
+- Images are downloaded during XML parsing, which slows down the first display of a feed.
 
 ## Disclaimer
 
@@ -90,5 +117,3 @@ This is an academic project. It is not affiliated with or endorsed by *Le Monde*
 ## Author
 
 Nicolas Peyregne — [LinkedIn](https://linkedin.com/in/nicolas-peyregne)
-
-![Android CI](https://github.com/KSR0/android-rss-news-reader/actions/workflows/android-ci.yml/badge.svg)
