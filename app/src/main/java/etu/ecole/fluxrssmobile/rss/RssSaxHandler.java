@@ -19,18 +19,16 @@ import etu.ecole.fluxrssmobile.BitmapUtility;
 public class RssSaxHandler extends DefaultHandler {
     private String url = null ;// l'URL du flux RSS à parser
 
-    // Ensemble de drapeau permettant de savoir où en est le parseur dans le flux XML
-    private boolean inTitle = false ;
-    private boolean inDescription = false ;
+    // Indique si le parseur se trouve dans un <item>
     private boolean inItem = false ;
-    private boolean inDate = false ;
-    // L'image référencée par l'attribut url du tag <enclosure>
-    private Bitmap image = null ;
+    // Texte de la balise en cours de lecture
+    private StringBuilder currentText = null ;
 
-    // Le titre, la description et la date extraits du flux RSS
-    private StringBuffer title = new StringBuffer();
-    private StringBuffer description = new StringBuffer();
-    private StringBuffer date = new StringBuffer();
+    private String title = "" ;
+    private String description = "" ;
+    private String date = "" ;
+    // L'image référencée par l'attribut url du tag <media:content>
+    private Bitmap image = null ;
 
     private final RssFeedViewModel viewModel;
 
@@ -42,73 +40,80 @@ public class RssSaxHandler extends DefaultHandler {
         this.url= url;
     }
 
+    public void parse(InputStream in) throws Exception {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+        XMLReader reader = parser.getXMLReader();
+        reader.setContentHandler(this);
+        reader.parse(new InputSource(in));
+    }
+
     public void processFeed(){
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            XMLReader reader = parser.getXMLReader();
-            reader.setContentHandler(this);
             InputStream inputStream = new URL(url).openStream();
-            reader.parse(new InputSource(inputStream));
+            parse(inputStream);
         } catch (Exception e) {
             Log.e("RSS", "processFeed exception" + e);
         }
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals("item")) {
+            // Nouvel article
             inItem = true;
+            title = "";
+            description = "";
+            date = "";
+            image = null;
             return;
         }
+        if (!inItem) return;
+
         switch (qName) {
             case "title":
-                inTitle = true;
-                break;
-
             case "description":
-                inDescription = true;
-                break;
-
             case "pubDate":
-                inDate = true;
+                currentText = new StringBuilder();
                 break;
 
             case "media:content":
                 String imageURL = attributes.getValue("url");
                 image = BitmapUtility.getBitmapFromUrl(imageURL);
+                break;
         }
     }
 
-    public void characters(char ch[], int start, int length) {
-        String chars = new String(ch).substring(start, start+length);
-
-        if (!inItem) return;
-
-        if (inTitle) {
-            title = new StringBuffer();
-            title.append(chars);
-            inTitle = false;
+    @Override
+    public void characters(char[] ch, int start, int length) {
+        // on accumule les morceaux car SAX peut découper les textes
+        if (currentText != null) {
+            currentText.append(ch, start, length);
         }
-        if (inDescription) {
-            description = new StringBuffer();
-            description.append(chars);
-            inDescription = false;
-        }
-        if (inDate) {
-            date = new StringBuffer();
-            date.append(chars);
-            inDate = false;
-        }
-
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("item")) {
             inItem = false;
-            RssItemModel newItem = new RssItemModel(title.toString(), description.toString(), date.toString(), image);
-            viewModel.addItem(newItem);
+            viewModel.addItem(new RssItemModel(title, description, date, image));
+            return;
         }
+        if (currentText == null) return;
+
+
+        String text = currentText.toString().trim();
+        switch (qName) {
+            case "title":
+                title = text;
+                break;
+            case "description":
+                description = text;
+                break;
+            case "pubDate":
+                date = text;
+                break;
+        }
+        currentText = null;
     }
-
-
 }

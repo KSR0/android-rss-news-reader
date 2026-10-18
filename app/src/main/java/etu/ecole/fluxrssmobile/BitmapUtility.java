@@ -12,17 +12,29 @@ import java.net.URL;
 
 public class BitmapUtility {
 
+    // Délais maximaux pour éviter qu'une image bloque le chargement du flux
+    private static final int CONNECT_TIMEOUT_MS = 10_000;
+    private static final int READ_TIMEOUT_MS = 15_000;
+
     // récupération d'une image sous format Bitmap à partir d'une url
     public static Bitmap getBitmapFromUrl(String imageURL) {
+        if (imageURL == null) return null;
+        HttpURLConnection connection = null;
         try {
-            URL url = new URL(imageURL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) new URL(imageURL).openConnection();
+            connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+            connection.setReadTimeout(READ_TIMEOUT_MS);
             connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
+            // try-with-resources : le flux est fermé même en cas d'erreur
+            try (InputStream input = connection.getInputStream()) {
+                return BitmapFactory.decodeStream(input);
+            }
         } catch (IOException e) {
             Log.e("Image", "Error getting BitMap" + e);
             return null;
+        } finally {
+            // libère la connexion dans tous les cas
+            if (connection != null) connection.disconnect();
         }
     }
 

@@ -90,3 +90,5 @@ This is an academic project. It is not affiliated with or endorsed by *Le Monde*
 ## Author
 
 Nicolas Peyregne — [LinkedIn](https://linkedin.com/in/nicolas-peyregne)
+
+![Android CI](https://github.com/KSR0/android-rss-news-reader/actions/workflows/android-ci.yml/badge.svg)

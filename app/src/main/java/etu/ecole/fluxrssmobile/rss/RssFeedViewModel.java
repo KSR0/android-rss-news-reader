@@ -56,7 +56,7 @@ public class RssFeedViewModel extends ViewModel {
         items.clear();
         for (RssItemEntity entity : cachedItems) {
             Bitmap image = BitmapUtility.bytesToBitmap(entity.imageBytes);
-            items.add(new RssItemModel(entity.title, entity.date, entity.description, image));
+            items.add(new RssItemModel(entity.title, entity.description, entity.date, image));
         }
         if (!items.isEmpty()) {
             currentItemIndex = 0;
